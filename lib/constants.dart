@@ -5,3 +5,4 @@ const kTransitionDuration = Duration(milliseconds: 250);
 const kGtSectraFine = "GT Sectra Fine";
 const kPaddingSH16 = EdgeInsets.symmetric(horizontal: 16.0);
 const kFeaturedBox = 'featured_box';
+const kLatestBox = 'latest_box';

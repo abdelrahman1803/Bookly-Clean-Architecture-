@@ -8,6 +8,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(BookEntityAdapter());
   await Hive.openBox(kFeaturedBox);
+  await Hive.openBox(kLatestBox);
   runApp(const Bookly());
 }
 
