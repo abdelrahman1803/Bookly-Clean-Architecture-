@@ -1,27 +1,73 @@
 import 'package:bookly/core/utilities/routing/routes.dart';
 import 'package:bookly/core/utilities/widgets/custom_error_image_widget.dart';
 import 'package:bookly/features/home/domain/entities/book_entity.dart';
+import 'package:bookly/features/home/presentation/manager/featured_books_cubit/featured_books_cubit.dart';
 import 'package:bookly/features/home/presentation/views/widgets/custom_book_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class FeaturedBooksListView extends StatelessWidget {
+class FeaturedBooksListView extends StatefulWidget {
   const FeaturedBooksListView({super.key, required this.books});
 
   final List<BookEntity> books;
+
+  @override
+  State<FeaturedBooksListView> createState() => _FeaturedBooksListViewState();
+}
+
+class _FeaturedBooksListViewState extends State<FeaturedBooksListView> {
+  late final ScrollController _scrollController;
+  int _nextPage = 1;
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_isLoadingMore) return;
+
+    final currentPosition = _scrollController.position.pixels;
+    final maxScrollExtent = _scrollController.position.maxScrollExtent;
+
+    // Check if we've reached 70% of the scroll length
+    if (currentPosition >= maxScrollExtent * 0.7) {
+      _isLoadingMore = true;
+      context.read<FeaturedBooksCubit>().fetchFeaturedBooks(
+        pageNumber: _nextPage,
+      );
+      _nextPage++;
+
+      // Reset the flag after a delay to prevent multiple rapid calls
+      Future.delayed(const Duration(seconds: 2), () {
+        _isLoadingMore = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.3,
       child: ListView.separated(
-        itemCount: books.length,
+        controller: _scrollController,
+        itemCount: widget.books.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
-          final imageUrl = books[index].image ?? '';
+          final imageUrl = widget.books[index].image ?? '';
           return GestureDetector(
             onTap: () => GoRouter.of(context).push(Routes.bookDetailsView),
-            child: books.isNotEmpty
+            child: widget.books.isNotEmpty
                 ? CustomBookItem(imageUrl: imageUrl)
                 : const ErrorImageWidget(),
           );
