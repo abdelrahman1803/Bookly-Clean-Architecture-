@@ -25,10 +25,14 @@ class BookModel extends BookEntity {
     this.accessInfo,
     this.searchInfo,
   }) : super(
-         bookId: id!,
+         // Avoid null assertions; provide safe fallbacks
+         bookId: id ?? (selfLink ?? ''),
          image: volumeInfo?.imageLinks?.thumbnail ?? '',
-         title: volumeInfo!.title!,
-         authorName: volumeInfo.authors?.first ?? 'Author Name not Available',
+         title: volumeInfo?.title ?? 'Untitled',
+         authorName:
+             (volumeInfo?.authors != null && volumeInfo!.authors!.isNotEmpty)
+             ? volumeInfo.authors!.first
+             : 'Author Name not Available',
          price: null,
          rating: null,
        );
