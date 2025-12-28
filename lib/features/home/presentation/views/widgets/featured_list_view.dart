@@ -1,3 +1,4 @@
+import 'package:bookly/core/shimmer/placeholders/featured_list_item_shimmer.dart';
 import 'package:bookly/core/utilities/routing/routes.dart';
 import 'package:bookly/core/utilities/widgets/custom_error_image_widget.dart';
 import 'package:bookly/features/home/domain/entities/book_entity.dart';
@@ -57,23 +58,38 @@ class _FeaturedBooksListViewState extends State<FeaturedBooksListView> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.3,
-      child: ListView.separated(
-        controller: _scrollController,
-        itemCount: widget.books.length,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (BuildContext context, int index) {
-          final imageUrl = widget.books[index].image ?? '';
-          return GestureDetector(
-            onTap: () => GoRouter.of(context).push(Routes.bookDetailsView),
-            child: widget.books.isNotEmpty
-                ? CustomBookItem(imageUrl: imageUrl)
-                : const ErrorImageWidget(),
+    return BlocBuilder<FeaturedBooksCubit, FeaturedBooksState>(
+      builder: (context, state) {
+        if (state is FeaturedBooksSuccess) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: ListView.separated(
+              controller: _scrollController,
+              itemCount: state.isLoadingMore
+                  ? widget.books.length + 1
+                  : widget.books.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                // Show shimmer for loading item at the end
+                if (state.isLoadingMore && index == widget.books.length) {
+                  return const FeaturedListItemShimmer();
+                }
+
+                final imageUrl = widget.books[index].image ?? '';
+                return GestureDetector(
+                  onTap: () =>
+                      GoRouter.of(context).push(Routes.bookDetailsView),
+                  child: widget.books.isNotEmpty
+                      ? CustomBookItem(imageUrl: imageUrl)
+                      : const ErrorImageWidget(),
+                );
+              },
+              separatorBuilder: (context, index) => const SizedBox(width: 10),
+            ),
           );
-        },
-        separatorBuilder: (context, index) => const SizedBox(width: 10),
-      ),
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }
