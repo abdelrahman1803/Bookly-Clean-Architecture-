@@ -15,7 +15,11 @@ class FeaturedBooksListViewBlocBuilder extends StatelessWidget {
         if (state is FeaturedBooksSuccess) {
           return FeaturedBooksListView(books: state.books);
         } else if (state is FeaturedBooksFailure) {
-          return CustomErrorWidget(errMessage: state.message);
+          return CustomErrorWidget(
+            errMessage: state.message,
+            onRetry: () =>
+                context.read<FeaturedBooksCubit>().fetchFeaturedBooks(),
+          );
         }
         return ListView.separated(
           itemCount: 6,
