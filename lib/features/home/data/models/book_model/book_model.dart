@@ -33,7 +33,7 @@ class BookModel extends BookEntity {
              (volumeInfo?.authors != null && volumeInfo!.authors!.isNotEmpty)
              ? volumeInfo.authors!.first
              : 'Author Name not Available',
-         price: null,
+         price: saleInfo?.retailPrice?.amount ?? 0,
          rating: null,
        );
 
