@@ -1,11 +1,12 @@
 import 'package:bookly/constants.dart';
 import 'package:bookly/core/utilities/widgets/custom_button.dart';
+import 'package:bookly/features/home/domain/entities/book_entity.dart';
 import 'package:flutter/material.dart';
-
-void _noop() {}
+import 'package:url_launcher/url_launcher.dart';
 
 class BooksAction extends StatelessWidget {
-  const BooksAction({super.key});
+  const BooksAction({super.key, required this.book});
+  final BookEntity book;
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +15,10 @@ class BooksAction extends StatelessWidget {
       child: SizedBox(
         height: 40,
         child: Row(
-          children: const [
+          children: [
             Expanded(
               child: CustomButton(
-                text: 'Free',
+                text: book.price == 0 ? 'Free' : book.price.toString(),
                 textColor: Colors.black,
                 backGroundColor: Colors.white,
                 fontWeight: FontWeight.w900,
@@ -25,7 +26,12 @@ class BooksAction extends StatelessWidget {
                   topLeft: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
                 ),
-                onPressed: _noop,
+                onPressed: () async {
+                  Uri url = Uri.parse(book.purchaseUrl);
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  }
+                },
               ),
             ),
             Expanded(
@@ -38,7 +44,12 @@ class BooksAction extends StatelessWidget {
                   topRight: Radius.circular(12),
                   bottomRight: Radius.circular(12),
                 ),
-                onPressed: _noop,
+                onPressed: () async {
+                  Uri url = Uri.parse(book.reviewUrl);
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  }
+                },
               ),
             ),
           ],

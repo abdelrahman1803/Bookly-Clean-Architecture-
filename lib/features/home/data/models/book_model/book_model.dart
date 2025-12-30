@@ -35,6 +35,8 @@ class BookModel extends BookEntity {
              : 'Author Name not Available',
          price: saleInfo?.retailPrice?.amount ?? 0,
          rating: null,
+         purchaseUrl: saleInfo?.buyLink ?? '',
+         reviewUrl: volumeInfo?.previewLink ?? '',
        );
 
   factory BookModel.fromJson(Map<String, dynamic> json) => BookModel(
