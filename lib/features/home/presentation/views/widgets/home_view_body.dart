@@ -1,5 +1,6 @@
 import 'package:bookly/constants.dart';
 import 'package:bookly/core/utilities/styles.dart';
+import 'package:bookly/core/utilities/widgets/floating_button.dart';
 import 'package:bookly/features/home/presentation/manager/latest_books_cubit/latest_books_cubit.dart';
 import 'package:bookly/features/home/presentation/views/widgets/custom_app_bar.dart';
 import 'package:bookly/features/home/presentation/views/widgets/featured_list_view_bloc_builder.dart';
@@ -16,6 +17,7 @@ class HomeViewBody extends StatefulWidget {
 
 class _HomeViewBodyState extends State<HomeViewBody> {
   late final ScrollController _scrollController;
+  final ValueNotifier<bool> _showFab = ValueNotifier<bool>(false);
   int _nextLatestPage = 1;
   bool _latestLoadRequested = false;
 
@@ -26,6 +28,12 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   }
 
   void _onScroll() {
+    final shouldShowFab =
+        _scrollController.hasClients && _scrollController.offset > 300;
+    if (_showFab.value != shouldShowFab) {
+      _showFab.value = shouldShowFab;
+    }
+
     if (_latestLoadRequested) return;
 
     final position = _scrollController.position;
@@ -55,42 +63,56 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _showFab.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: _scrollController,
-      physics: const BouncingScrollPhysics(),
-      slivers: <Widget>[
-        SliverToBoxAdapter(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(padding: kPaddingSH16, child: CustomAppBar()),
-              FeaturedBooksListViewBlocBuilder(),
-              const SizedBox(height: 36),
-              Padding(
-                padding: kPaddingSH16,
-                child: Text(
-                  "Latest Books",
-                  style: Styles.textStyle20.copyWith(
-                    fontWeight: FontWeight.bold,
+    return Stack(
+      children: [
+        CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(),
+          slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(padding: kPaddingSH16, child: CustomAppBar()),
+                  FeaturedBooksListViewBlocBuilder(),
+                  const SizedBox(height: 36),
+                  Padding(
+                    padding: kPaddingSH16,
+                    child: Text(
+                      "Latest Books",
+                      style: Styles.textStyle20.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                ],
               ),
-              const SizedBox(height: 10),
-            ],
-          ),
+            ),
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: kPaddingSH16,
+                child: LatestBooksBlocBuilder(),
+              ),
+            ),
+          ],
         ),
-        const SliverToBoxAdapter(
-          child: Padding(
-            padding: kPaddingSH16,
-            child: LatestBooksBlocBuilder(),
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingButton(
+            scrollController: _scrollController,
+            isVisibleListenable: _showFab,
           ),
         ),
       ],
     );
   }
 }
+
