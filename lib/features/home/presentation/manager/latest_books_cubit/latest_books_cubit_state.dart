@@ -9,8 +9,9 @@ final class LatestBooksLoading extends LatestBooksState {}
 
 final class LatestBooksSuccess extends LatestBooksState {
   final List<BookEntity> books;
+  final bool isLoadingMore;
 
-  LatestBooksSuccess(this.books);
+  LatestBooksSuccess(this.books, {this.isLoadingMore = false});
 }
 
 final class LatestBooksFailure extends LatestBooksState {
