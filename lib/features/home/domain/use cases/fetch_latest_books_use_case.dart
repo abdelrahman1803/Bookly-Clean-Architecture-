@@ -11,8 +11,8 @@ class FetchLatestBooksUseCase extends UseCase<List<BookEntity>> {
 
   @override
   // no needn't in this project
-  Future<Either<Failure, List<BookEntity>>> call() async {
+  Future<Either<Failure, List<BookEntity>>> call({int pageNumber = 0}) async {
     //check permissions
-    return homeRepo.fetchLatestBooks();
+    return await homeRepo.fetchLatestBooks(pageNumber: pageNumber);
   }
 }
