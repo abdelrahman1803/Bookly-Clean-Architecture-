@@ -20,6 +20,8 @@ class BookEntity {
   final String purchaseUrl;
   @HiveField(7)
   final String reviewUrl;
+  @HiveField(8)
+  final String category;
 
   BookEntity({
     required this.bookId,
@@ -30,5 +32,6 @@ class BookEntity {
     required this.rating,
     required this.purchaseUrl,
     required this.reviewUrl,
+    required this.category,
   });
 }
