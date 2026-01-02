@@ -6,18 +6,23 @@ import 'package:bookly/features/search/UI/manager/search_books_cubit/search_book
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void showRemoveFromHistoryDialog(BuildContext context, book) {
+void _showConfirmDialog({
+  required BuildContext context,
+  required String title,
+  required String message,
+  required String confirmText,
+  required VoidCallback onConfirm,
+}) {
   final theme = Theme.of(context);
   final screenWidth = MediaQuery.of(context).size.width;
 
   showDialog(
     context: context,
-    barrierColor: Colors.black.withValues(alpha: 0.05), // blur خفيف للخلفية
+    barrierColor: Colors.black.withValues(alpha: 0.05),
     builder: (dialogContext) {
       return Center(
         child: Stack(
           children: [
-            // الخلفية الضبابية الخفيفة
             BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
               child: Container(color: Colors.black.withValues(alpha: 0.05)),
@@ -34,9 +39,7 @@ void showRemoveFromHistoryDialog(BuildContext context, book) {
                       vertical: screenWidth * 0.06,
                     ),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(
-                        alpha: 0.25,
-                      ), // لون من الثيم
+                      color: theme.colorScheme.primary.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: theme.colorScheme.onPrimary.withValues(
@@ -53,15 +56,15 @@ void showRemoveFromHistoryDialog(BuildContext context, book) {
                           color: Colors.red,
                         ),
                         SizedBox(height: screenWidth * 0.04),
-                        const Text(
-                          'Remove Item from History?',
-                          style: Styles.textStyle18,
+                        Text(
+                          title,
+                          style: Styles.textStyle18.copyWith(fontSize: 20),
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: screenWidth * 0.02),
-                        const Text(
-                          'This action cannot be undone.',
-                          style: Styles.textStyle14,
+                        Text(
+                          message,
+                          style: Styles.textStyle14.copyWith(fontSize: 15),
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: screenWidth * 0.05),
@@ -72,31 +75,27 @@ void showRemoveFromHistoryDialog(BuildContext context, book) {
                                 text: 'Cancel',
                                 textColor: Colors.white,
                                 backGroundColor: Colors.deepPurpleAccent
-                                    .withValues(
-                                      alpha: 0.8,
-                                    ), // لون Cancel القديم
+                                    .withValues(alpha: 0.8),
                                 fontWeight: FontWeight.w700,
-                                fontSize: screenWidth * 0.035,
-                                height: screenWidth * 0.09,
+                                fontSize: screenWidth * 0.038,
+                                height: screenWidth * 0.10,
                                 onPressed: () => Navigator.pop(dialogContext),
                               ),
                             ),
                             SizedBox(width: screenWidth * 0.025),
                             Expanded(
                               child: CustomButton(
-                                text: 'Delete',
+                                text: confirmText,
                                 textColor: Colors.white,
                                 backGroundColor: Colors.red.withValues(
                                   alpha: 0.85,
                                 ),
                                 fontWeight: FontWeight.w700,
-                                fontSize: screenWidth * 0.035,
-                                height: screenWidth * 0.09,
+                                fontSize: screenWidth * 0.038,
+                                height: screenWidth * 0.10,
                                 onPressed: () {
                                   Navigator.pop(dialogContext);
-                                  context
-                                      .read<SearchBooksCubit>()
-                                      .removeBookFromHistory(book);
+                                  onConfirm();
                                 },
                               ),
                             ),
@@ -111,6 +110,30 @@ void showRemoveFromHistoryDialog(BuildContext context, book) {
           ],
         ),
       );
+    },
+  );
+}
+
+void showRemoveFromHistoryDialog(BuildContext context, book) {
+  _showConfirmDialog(
+    context: context,
+    title: 'Remove Item from History?',
+    message: 'This action cannot be undone.',
+    confirmText: 'Delete',
+    onConfirm: () {
+      context.read<SearchBooksCubit>().removeBookFromHistory(book);
+    },
+  );
+}
+
+void showClearHistoryDialog(BuildContext context) {
+  _showConfirmDialog(
+    context: context,
+    title: 'Clear search history?',
+    message: 'This will remove all items from history.',
+    confirmText: 'Clear',
+    onConfirm: () {
+      context.read<SearchBooksCubit>().clearSearchHistory();
     },
   );
 }

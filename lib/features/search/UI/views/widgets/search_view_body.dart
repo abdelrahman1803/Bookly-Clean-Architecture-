@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bookly/core/utilities/styles.dart';
 import 'package:bookly/features/search/UI/manager/search_books_cubit/search_books_cubit.dart';
 import 'package:bookly/features/search/UI/views/widgets/custom_search_text_field.dart';
+import 'package:bookly/features/search/UI/views/widgets/remove_from_history_dailog_widget.dart';
 import 'package:bookly/features/search/UI/views/widgets/search_result_list_view_bloc_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -147,7 +148,7 @@ class _SearchViewBodyState extends State<SearchViewBody> {
                       if (!canClear) return const SizedBox.shrink();
                       return TextButton(
                         onPressed: () {
-                          context.read<SearchBooksCubit>().clearSearchHistory();
+                          showClearHistoryDialog(context);
                         },
                         child: const Text('Clear'),
                       );
