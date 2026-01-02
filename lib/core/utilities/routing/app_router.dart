@@ -1,4 +1,5 @@
 import 'package:bookly/core/utilities/routing/routes.dart';
+import 'package:bookly/features/bookmarks/presentation/views/bookmarks_view.dart';
 import 'package:bookly/features/home/domain/entities/book_entity.dart';
 import 'package:bookly/features/home/presentation/views/book_details_view.dart';
 import 'package:bookly/features/home/presentation/views/home_view.dart';
@@ -29,6 +30,10 @@ abstract class AppRouter {
       GoRoute(
         path: Routes.searchView,
         builder: (context, state) => const SearchView(),
+      ),
+      GoRoute(
+        path: Routes.bookmarksView,
+        builder: (context, state) => const BookmarksView(),
       ),
     ],
   );

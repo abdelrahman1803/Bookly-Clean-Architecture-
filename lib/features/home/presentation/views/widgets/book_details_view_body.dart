@@ -15,7 +15,7 @@ class BookDetailsViewBody extends StatelessWidget {
         SliverToBoxAdapter(
           child: Column(
             children: [
-              const CustomBookDetailsAppBar(),
+              CustomBookDetailsAppBar(book: book),
               BookDetailsSection(book: book),
               const SizedBox(height: 16),
               SimilarBooksSection(book: book),

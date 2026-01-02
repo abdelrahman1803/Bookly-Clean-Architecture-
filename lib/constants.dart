@@ -9,3 +9,4 @@ const kLatestBox = 'latest_box';
 const kSimilarBox = 'similar_box';
 const kSearchBox = 'search_box';
 const kSearchHistoryBox = 'search_history_box';
+const kBookmarksBox = 'bookmarks_box';

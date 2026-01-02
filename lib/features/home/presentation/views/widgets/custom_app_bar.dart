@@ -30,9 +30,22 @@ class CustomAppBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Image.asset(AssetsData.logo, height: logoHeight),
-              IconButton(
-                onPressed: () => GoRouter.of(context).push(Routes.searchView),
-                icon: Icon(FontAwesomeIcons.magnifyingGlass, size: logoHeight),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () =>
+                        GoRouter.of(context).push(Routes.bookmarksView),
+                    icon: Icon(FontAwesomeIcons.bookmark, size: logoHeight),
+                  ),
+                  IconButton(
+                    onPressed: () =>
+                        GoRouter.of(context).push(Routes.searchView),
+                    icon: Icon(
+                      FontAwesomeIcons.magnifyingGlass,
+                      size: logoHeight,
+                    ),
+                  ),
+                ],
               ),
             ],
           );
