@@ -2,6 +2,7 @@ import 'package:bookly/features/home/domain/entities/book_entity.dart';
 import 'package:bookly/features/search/domain/use%20cases/clear_search_history_use_case.dart';
 import 'package:bookly/features/search/domain/use%20cases/fetch_search_history_use_case.dart';
 import 'package:bookly/features/search/domain/use%20cases/fetch_searched_books_use_cases.dart';
+import 'package:bookly/features/search/domain/use%20cases/remove_book_from_history_use_case.dart';
 import 'package:bookly/features/search/domain/use%20cases/save_book_to_history_use_case.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -13,12 +14,14 @@ class SearchBooksCubit extends Cubit<SearchBooksState> {
   final FetchSearchHistoryUseCase fetchSearchHistoryUseCase;
   final ClearSearchHistoryUseCase clearSearchHistoryUseCase;
   final SaveBookToHistoryUseCase saveBookToHistoryUseCase;
+  final RemoveBookFromHistoryUseCase removeBookFromHistoryUseCase;
 
   SearchBooksCubit(
     this.fetchSearchedBooksUseCases,
     this.fetchSearchHistoryUseCase,
     this.clearSearchHistoryUseCase,
     this.saveBookToHistoryUseCase,
+    this.removeBookFromHistoryUseCase,
   ) : super(SearchBooksHistoryLoading());
   Future<void> fetchSearchedBooks(String title) async {
     emit(SearchBooksLoading());
@@ -60,5 +63,24 @@ class SearchBooksCubit extends Cubit<SearchBooksState> {
 
   Future<void> saveBookToHistory(BookEntity book) async {
     await saveBookToHistoryUseCase.call(book);
+  }
+
+  Future<void> removeBookFromHistory(BookEntity book) async {
+    final currentState = state;
+    if (currentState is SearchBooksHistorySuccess) {
+      final updated = currentState.bookHistory
+          .where(
+            (b) => b.bookId.isNotEmpty
+                ? b.bookId != book.bookId
+                : b.title != book.title,
+          )
+          .toList();
+      emit(SearchBooksHistorySuccess(updated));
+    }
+
+    final result = await removeBookFromHistoryUseCase.call(book);
+    result.fold((failure) {
+      emit(SearchBooksFailure(failure.message));
+    }, (_) {});
   }
 }

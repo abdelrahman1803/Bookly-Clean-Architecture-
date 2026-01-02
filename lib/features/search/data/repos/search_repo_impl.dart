@@ -62,4 +62,14 @@ class SearchRepoImpl extends SearchRepo {
       return left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> removeBookFromHistory(BookEntity book) async {
+    try {
+      await searchLocalDataSource.removeBookFromHistory(book);
+      return right(null);
+    } catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
 }

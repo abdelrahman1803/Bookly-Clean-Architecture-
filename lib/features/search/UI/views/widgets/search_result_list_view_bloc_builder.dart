@@ -2,12 +2,15 @@ import 'package:bookly/core/shimmer/placeholders/vertical_book_list_item_shimmer
 import 'package:bookly/core/utilities/styles.dart';
 import 'package:bookly/core/utilities/widgets/custom_error_widget.dart';
 import 'package:bookly/features/search/UI/manager/search_books_cubit/search_books_cubit.dart';
+import 'package:bookly/features/search/UI/views/widgets/remove_from_history_dailog_widget.dart';
 import 'package:bookly/features/search/UI/views/widgets/search_result_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchResultListViewBlocBuilder extends StatelessWidget {
   const SearchResultListViewBlocBuilder({super.key});
+
+  
 
   Widget _buildLoadingList() {
     return ListView.separated(
@@ -44,6 +47,9 @@ class SearchResultListViewBlocBuilder extends StatelessWidget {
             books: state.bookHistory,
             onBookTap: (book) {
               context.read<SearchBooksCubit>().saveBookToHistory(book);
+            },
+            onBookLongPress: (book) {
+              showRemoveFromHistoryDialog(context, book);
             },
           );
         } else if (state is SearchBooksFailure) {

@@ -5,6 +5,7 @@ import 'package:bookly/features/search/data/repos/search_repo_impl.dart';
 import 'package:bookly/features/search/domain/use%20cases/clear_search_history_use_case.dart';
 import 'package:bookly/features/search/domain/use%20cases/fetch_search_history_use_case.dart';
 import 'package:bookly/features/search/domain/use%20cases/fetch_searched_books_use_cases.dart';
+import 'package:bookly/features/search/domain/use%20cases/remove_book_from_history_use_case.dart';
 import 'package:bookly/features/search/domain/use%20cases/save_book_to_history_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,7 @@ class SearchView extends StatelessWidget {
         FetchSearchHistoryUseCase(getIt.get<SearchRepoImpl>()),
         ClearSearchHistoryUseCase(getIt.get<SearchRepoImpl>()),
         SaveBookToHistoryUseCase(getIt.get<SearchRepoImpl>()),
+        RemoveBookFromHistoryUseCase(getIt.get<SearchRepoImpl>()),
       )..fetchSearchHistory(),
       child: SafeArea(child: const SearchViewBody()),
     );

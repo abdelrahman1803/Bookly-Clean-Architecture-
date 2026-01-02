@@ -5,9 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class SearchResultListView extends StatelessWidget {
-  const SearchResultListView({super.key, required this.books, this.onBookTap});
+  const SearchResultListView({
+    super.key,
+    required this.books,
+    this.onBookTap,
+    this.onBookLongPress,
+  });
   final List<BookEntity> books;
   final ValueChanged<BookEntity>? onBookTap;
+  final ValueChanged<BookEntity>? onBookLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +29,9 @@ class SearchResultListView extends StatelessWidget {
             onTap: () {
               onBookTap?.call(item);
               GoRouter.of(context).push(Routes.bookDetailsView, extra: item);
+            },
+            onLongPress: () {
+              onBookLongPress?.call(item);
             },
           ),
         );

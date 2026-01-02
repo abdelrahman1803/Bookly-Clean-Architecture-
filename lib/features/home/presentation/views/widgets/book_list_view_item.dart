@@ -8,9 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BookListViewItem extends StatelessWidget {
-  const BookListViewItem({super.key, required this.book, this.onTap});
+  const BookListViewItem({
+    super.key,
+    required this.book,
+    this.onTap,
+    this.onLongPress,
+  });
   final BookEntity book;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +24,7 @@ class BookListViewItem extends StatelessWidget {
       onTap:
           onTap ??
           () => GoRouter.of(context).push(Routes.bookDetailsView, extra: book),
+      onLongPress: onLongPress,
       child: SizedBox(
         height: 120,
         child: Row(

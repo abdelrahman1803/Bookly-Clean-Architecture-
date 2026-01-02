@@ -6,10 +6,18 @@ abstract class SearchLocalDataSource {
   Future<void> saveSearchedBook(BookEntity book);
   List<BookEntity> fetchSearchedBooks();
   Future<void> clearSearchHistory();
+  Future<void> removeBookFromHistory(BookEntity book);
 }
 
 class SearchLocalDataSourceImpl extends SearchLocalDataSource {
   final Box<BookEntity> box = Hive.box<BookEntity>(kSearchHistoryBox);
+
+  bool _matches(BookEntity a, BookEntity b) {
+    if (a.bookId.isNotEmpty && b.bookId.isNotEmpty) {
+      return a.bookId == b.bookId;
+    }
+    return a.title == b.title;
+  }
 
   @override
   Future<void> saveSearchedBook(BookEntity book) async {
@@ -31,5 +39,15 @@ class SearchLocalDataSourceImpl extends SearchLocalDataSource {
   @override
   Future<void> clearSearchHistory() async {
     await box.clear();
+  }
+
+  @override
+  Future<void> removeBookFromHistory(BookEntity book) async {
+    for (int i = box.length - 1; i >= 0; i--) {
+      final existing = box.getAt(i);
+      if (existing != null && _matches(existing, book)) {
+        await box.deleteAt(i);
+      }
+    }
   }
 }

@@ -10,4 +10,6 @@ abstract class SearchRepo {
   Future<Either<Failure, void>> clearSearchHistory();
 
   Future<Either<Failure, void>> saveBookToHistory(BookEntity book);
+
+  Future<Either<Failure, void>> removeBookFromHistory(BookEntity book);
 }
